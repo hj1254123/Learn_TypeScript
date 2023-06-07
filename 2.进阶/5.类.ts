@@ -48,7 +48,7 @@ class Cat2 extends Animal2 { //报错，不允许被继承。
     super(name);
   }
 }
-let a = new Animal2('Jack'); //报错，不允许实例化。
+let a2 = new Animal2('Jack'); //报错，不允许实例化。
 
 // - 当构造函数修饰为 protected 时，该类只允许被继承：
 class Animal3 {
@@ -63,7 +63,7 @@ class Cat3 extends Animal3 {//可以继承
   }
 }
 
-let a = new Animal3('Jack');//不允许实例化
+let a3 = new Animal3('Jack');//不允许实例化
 
 // ## 参数属性
 // 修饰符和readonly还可以使用在构造函数参数中，
