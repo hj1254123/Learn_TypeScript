@@ -119,7 +119,7 @@ class Dog6 extends Animal6 {
   constructor(name: string) {
     super(name);
   }
-  // makeSound 被定义为了抽象方法，必须实现，否则保存
+  // makeSound 被定义为了抽象方法，必须实现，否则报错
   makeSound(): void {
     console.log(`${this.name} barks`);
   }
