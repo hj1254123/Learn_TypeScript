@@ -1,4 +1,6 @@
 const path = require('path')
+const HTMLWebpackPlugin = require('html-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
   entry: './src/index.ts', //指定入口文件
@@ -9,10 +11,20 @@ module.exports = {
   module: { //指定webpage打包时，要使用的模块
     rules: [ //指定要加载的规则
       {
-        test: /\.ts$/,//规则生效文件，这里是以ts结尾的文件
-        use: 'ts-loader',//要使用的loader，用它来处理上面指定的文件
-        exclude: /node-modules/,//排除文件
+        test: /\.ts$/, //规则生效文件，这里是以ts结尾的文件
+        use: 'ts-loader', //要使用的loader，用它来处理上面指定的文件
+        exclude: /node-modules/, //排除文件
       }
     ]
+  },
+  plugins: [ //配置webpack插件
+    new HTMLWebpackPlugin({ //自动生成html文件
+      // title: '自定义 title'
+      template: './src/index.html'
+    }),
+    new CleanWebpackPlugin(),
+  ],
+  resolve: { //配置模块如何解析
+    extensions: ['.ts', '.js'], //配置需要解析的扩展名
   }
 }
