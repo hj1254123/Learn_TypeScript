@@ -12,7 +12,26 @@ module.exports = {
     rules: [ //指定要加载的规则
       {
         test: /\.ts$/, //规则生效文件，这里是以ts结尾的文件
-        use: 'ts-loader', //要使用的loader，用它来处理上面指定的文件
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    targets: {
+                      'chrome': '51',
+                    },
+                    'corejs': '3', //corejs版本
+                    'useBuiltIns': 'usage', //按需加载
+                  }
+                ]
+              ]
+            }
+          },
+          'ts-loader'
+        ],
         exclude: /node-modules/, //排除文件
       }
     ]
