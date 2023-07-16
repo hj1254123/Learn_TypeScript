@@ -31,6 +31,11 @@ class Snake {
     const div = document.createElement('div');
     this.element.appendChild(div);
   }
+
+  // 检查蛇头碰撞墙壁
+  CheckSnakeheadHittingWall(x: number, y: number): boolean {
+    return x < 0 || x + 10 > 300 || y < 0 || y > 300;
+  }
 }
 
 export default Snake;

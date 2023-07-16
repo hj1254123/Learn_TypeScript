@@ -13,10 +13,14 @@ class GameControl {
     this.snake = new Snake();
     this.food = new Food();
     this.scorePanel = new ScorePanel();
-    this.init()
+    this.init();
   }
 
   init() {
+    this.snake.x = 0;
+    this.snake.y = 0;
+    this.direction = '';
+    this.isLive = true;
     document.addEventListener('keydown', this.keydownHandler.bind(this));
     this.run();
   }
@@ -28,6 +32,7 @@ class GameControl {
   run() {
     let x = this.snake.x;
     let y = this.snake.y;
+    // 计算蛇下一帧的位置
     switch (this.direction) {
       case 'ArrowUp':
         y -= 10;
@@ -43,11 +48,30 @@ class GameControl {
         break;
     }
     
+    // 检查蛇头是否碰撞墙壁
+    this.isLive = !this.snake.CheckSnakeheadHittingWall(x, y);
+    if (!this.isLive) {
+      alert('游戏结束，点击重新开始!');
+      this.init();
+      return;
+    }
+    // 检查是否吃到食物
+    const isEatFood = this.checkEatFood(x, y)
+    if(isEatFood) {
+      this.food.change();
+      this.scorePanel.addScore();
+      this.snake.addBody();
+    }
+    // 更新蛇位置
     this.snake.x = x;
     this.snake.y = y;
-
-    const ms = 300 / this.scorePanel.level;
-    this.isLive && setTimeout(this.run.bind(this), ms);
+    // 继续执行run
+    const ms = 200 / this.scorePanel.level;
+    setTimeout(this.run.bind(this), ms);
+  }
+  
+  checkEatFood(x: number, y: number) {
+    return x === this.food.x && y === this.food.y;
   }
 }
 
