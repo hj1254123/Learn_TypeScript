@@ -1,7 +1,7 @@
 class Snake {
   element: HTMLElement; //蛇容器
   head: HTMLElement; //蛇头
-  bodies: HTMLCollection; //蛇身
+  bodies: HTMLCollectionOf<HTMLElement>; //蛇身
   constructor() {
     this.element = document.getElementById('snake')!;
     this.head = document.querySelector('#snake > div')!;
@@ -19,6 +19,7 @@ class Snake {
 
   // 设置蛇头坐标
   set x(value: number) {
+    this.movebody()
     this.head.style.left = value + 'px';
   }
 
@@ -32,9 +33,29 @@ class Snake {
     this.element.appendChild(div);
   }
 
+  movebody() {
+    for (let i = this.bodies.length - 1; i > 0; i--) {
+      // 获取前一个身体的x、y
+      let x = this.bodies[i - 1].offsetLeft;
+      let y = this.bodies[i - 1].offsetTop;
+      this.bodies[i].style.top = y + 'px';
+      this.bodies[i].style.left = x + 'px';
+    }
+  }
+
   // 检查蛇头碰撞墙壁
   CheckSnakeheadHittingWall(x: number, y: number): boolean {
-    return x < 0 || x + 10 > 300 || y < 0 || y > 300;
+    return x < 0 || x > 290 || y < 0 || y > 290;
+  }
+  // 检查蛇头碰撞身体
+  CheckSnakeheadHittingBody(x: number, y: number): boolean {
+    if(this.bodies.length < 5) return false
+    for (const body of this.bodies) {
+      if(x === body.offsetLeft && y === body.offsetTop) {
+        return true
+      }
+    }
+    return false
   }
 }
 

@@ -2,6 +2,13 @@ import Snake from './Snake'
 import Food from './Food';
 import ScorePanel from './ScorePanel';
 
+enum Directions {
+  ArrowUp = "ArrowUp",
+  ArrowDown = "ArrowDown",
+  ArrowRight = "ArrowRight",
+  ArrowLeft = "ArrowLeft",
+}
+
 // 游戏控制器，控制其它类
 class GameControl {
   snake: Snake;
@@ -17,16 +24,21 @@ class GameControl {
   }
 
   init() {
-    this.snake.x = 0;
-    this.snake.y = 0;
-    this.direction = '';
-    this.isLive = true;
     document.addEventListener('keydown', this.keydownHandler.bind(this));
     this.run();
   }
 
   keydownHandler(event: KeyboardEvent) {
-    this.direction = event.key;
+    const newDirection = event.key;
+    // 禁止蛇掉头
+    if (
+      (newDirection === Directions.ArrowUp && this.direction !== Directions.ArrowDown) ||
+      (newDirection === Directions.ArrowDown && this.direction !== Directions.ArrowUp) ||
+      (newDirection === Directions.ArrowRight && this.direction !== Directions.ArrowLeft) ||
+      (newDirection === Directions.ArrowLeft && this.direction !== Directions.ArrowRight)
+    ) {
+      this.direction = newDirection;
+    }
   }
 
   run() {
@@ -34,30 +46,39 @@ class GameControl {
     let y = this.snake.y;
     // 计算蛇下一帧的位置
     switch (this.direction) {
-      case 'ArrowUp':
+      case Directions.ArrowUp:
         y -= 10;
         break;
-      case 'ArrowDown':
+      case Directions.ArrowDown:
         y += 10;
         break;
-      case 'ArrowRight':
+      case Directions.ArrowRight:
         x += 10;
         break;
-      case 'ArrowLeft':
+      case Directions.ArrowLeft:
         x -= 10;
         break;
     }
-    
+
     // 检查蛇头是否碰撞墙壁
     this.isLive = !this.snake.CheckSnakeheadHittingWall(x, y);
+    // 控制游戏结束
     if (!this.isLive) {
-      alert('游戏结束，点击重新开始!');
-      this.init();
+      alert('撞墙，游戏结束！');
+      location.reload();
+      return;
+    }
+    // 检查蛇头是否碰撞身体
+    this.isLive = !this.snake.CheckSnakeheadHittingBody(x, y);
+    // 控制游戏结束
+    if (!this.isLive) {
+      alert('咬到身体了，游戏结束！');
+      location.reload();
       return;
     }
     // 检查是否吃到食物
     const isEatFood = this.checkEatFood(x, y)
-    if(isEatFood) {
+    if (isEatFood) {
       this.food.change();
       this.scorePanel.addScore();
       this.snake.addBody();
@@ -69,7 +90,7 @@ class GameControl {
     const ms = 200 / this.scorePanel.level;
     setTimeout(this.run.bind(this), ms);
   }
-  
+
   checkEatFood(x: number, y: number) {
     return x === this.food.x && y === this.food.y;
   }
